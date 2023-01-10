@@ -12,7 +12,9 @@
 #include <QSqlRecord>
 #include <QMessageBox>
 
+#include "registerwindow.h"
 #include "Mainwindow.h"
+
 
 namespace Ui {
 class Form;
@@ -42,6 +44,7 @@ private:
     QSqlTableModel *model;
 
     Mainwindow* mainwindow;
+    Registerwindow* registerwindow;
 };
 
 #endif // LOGIN_H

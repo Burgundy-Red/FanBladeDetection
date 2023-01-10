@@ -37,6 +37,9 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLabel" name="play_label">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
             <width>103</width>
@@ -306,85 +309,55 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1520</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="fillinformation_m">
-    <property name="title">
-     <string>填写信息</string>
-    </property>
-    <addaction name="action1"/>
-   </widget>
-   <widget class="QMenu" name="manageplan_m">
-    <property name="title">
-     <string>管理检测计划</string>
-    </property>
-    <addaction name="actionguanli"/>
-   </widget>
-   <widget class="QMenu" name="menu_3">
-    <property name="title">
-     <string>查询检测记录</string>
-    </property>
-    <addaction name="actionchaxun"/>
-   </widget>
-   <widget class="QMenu" name="menu_4">
-    <property name="title">
-     <string>生成检测报告</string>
-    </property>
-    <addaction name="actionshengcheng"/>
-   </widget>
-   <widget class="QMenu" name="menu_5">
-    <property name="title">
-     <string>终止当前操作</string>
-    </property>
-    <addaction name="actionzhongzhi"/>
-   </widget>
-   <widget class="QMenu" name="status_m">
-    <property name="title">
-     <string>当前信息</string>
-    </property>
-    <addaction name="actionstatus"/>
-   </widget>
-   <addaction name="fillinformation_m"/>
-   <addaction name="manageplan_m"/>
-   <addaction name="menu_3"/>
-   <addaction name="menu_4"/>
-   <addaction name="menu_5"/>
-   <addaction name="status_m"/>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="action1">
+  <widget class="QToolBar" name="toolBar">
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+    </font>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_fillinfo"/>
+   <addaction name="action_manage"/>
+   <addaction name="action_querylog"/>
+   <addaction name="action_genreport"/>
+   <addaction name="action_curactionend"/>
+   <addaction name="action_curinfo"/>
+  </widget>
+  <action name="action_fillinfo">
    <property name="text">
     <string>填写信息</string>
    </property>
   </action>
-  <action name="actionguanli">
+  <action name="action_manage">
    <property name="text">
     <string>管理检测计划</string>
    </property>
   </action>
-  <action name="actionchaxun">
+  <action name="action_querylog">
    <property name="text">
     <string>查询检测记录</string>
    </property>
   </action>
-  <action name="actionshengcheng">
+  <action name="action_genreport">
    <property name="text">
     <string>生成检测报告</string>
    </property>
   </action>
-  <action name="actionzhongzhi">
+  <action name="action_curactionend">
    <property name="text">
     <string>终止当前操作</string>
    </property>
   </action>
-  <action name="actionstatus">
+  <action name="action_curinfo">
    <property name="text">
     <string>当前信息</string>
    </property>
