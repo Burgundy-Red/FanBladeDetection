@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QSqlTableModel>
 #include <QMessageBox>
+#include <QSqlQueryModel>
 
 namespace Ui {
     class RegisterWindow;
