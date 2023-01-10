@@ -349,6 +349,7 @@
     <property name="title">
      <string>当前信息</string>
     </property>
+    <addaction name="actionstatus"/>
    </widget>
    <addaction name="fillinformation_m"/>
    <addaction name="manageplan_m"/>
@@ -381,6 +382,11 @@
   <action name="actionzhongzhi">
    <property name="text">
     <string>终止当前操作</string>
+   </property>
+  </action>
+  <action name="actionstatus">
+   <property name="text">
+    <string>当前信息</string>
    </property>
   </action>
  </widget>
