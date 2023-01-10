@@ -72,7 +72,9 @@ void Login::OnBtnClickedLogin() {
 }
 
 void Login::OnBtnClickedLogon() {
-
+    this->registerwindow = new Registerwindow();
+    this->registerwindow->setWindowModality(Qt::ApplicationModal);
+    this->registerwindow->show();
 }
 
 void Login::OnBtnClickeExit() {
