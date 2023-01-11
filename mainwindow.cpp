@@ -14,14 +14,17 @@ Mainwindow::Mainwindow()
 
     connect(ui->action_fillinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
     connect(ui->action_manage, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
+    connect(this, SIGNAL(toManageplanwindowInfo(QString, QString)), manageplan_window, SLOT(curLogin(QString, QString)));
+    //    emit toManageplanwindowInfo(this->curFarmId, this->curSurveyorName);  // 在这里释放信号
+
     connect(ui->action_querylog, &QAction::triggered, this, &Mainwindow::OnBtnClickedQuerylog);
     connect(ui->action_genreport, &QAction::triggered, this, &Mainwindow::OnBtnClickedGenReport);
     connect(ui->action_curactionend, &QAction::triggered, this, &Mainwindow::OnBtnClickedActionend);
     connect(ui->action_curinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedInfo);
-
 //    connect(gather_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedGather);
 //    connect(stop_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedStop);
 //    connect(table1, &QTableWidget::itemClicked, this, &Mainwindow::show_data1);
+
 }
 
 Mainwindow::~Mainwindow() {

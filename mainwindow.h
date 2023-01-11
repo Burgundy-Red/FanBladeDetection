@@ -1,9 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QString>
 #include <QMainWindow>
 #include <QObject>
 #include <QWidget>
+#include <QMessageBox>
+
+#include "manageplan.h"
 #include <QPushButton>
 #include <QTableWidget>
 #include <QMessageBox>
@@ -27,6 +31,7 @@ public:
 
 signals:
     void toFillInformation(QString, QString);
+    void toManageplanwindowInfo(QString, QString);
 
 public slots:
     void curLogin(QString, QString);

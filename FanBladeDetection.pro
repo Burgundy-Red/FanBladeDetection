@@ -23,7 +23,6 @@ SOURCES += \
     manageplan.cpp \
     fillinformation.cpp
 
-
 HEADERS += \
     Login.h \
     Mainwindow.h \
@@ -31,9 +30,11 @@ HEADERS += \
     manageplan.h \
     fillinformation.h
 
+
 FORMS += \
     Login.ui \
     Main_window.ui \
+    Manageplan.ui \
     RegisteredUser.ui \
     FillInformation.ui \
     Manageplan.ui
