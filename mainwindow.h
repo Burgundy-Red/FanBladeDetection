@@ -6,6 +6,12 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QTableWidget>
+#include <QMessageBox>
+#include <QToolTip>
+#include <QCursor>
+
+#include "fillinformation.h"
+#include "manageplan.h"
 
 namespace  Ui {
     class MainWindow;
@@ -20,30 +26,25 @@ public:
     ~Mainwindow();
 
 signals:
+    void toFillInformation(QString, QString);
 
 public slots:
     void curLogin(QString, QString);
+
 private slots:
     void OnBtnClickedFillinformation();
     void OnBtnClickedManageplan();
-    void OnBtnClickedStatus();
-    void OnBtnClickedGather();
-    void OnBtnClickedStop();
-    void show_data1();
+    void OnBtnClickedQuerylog();
+    void OnBtnClickedGenReport();
+    void OnBtnClickedActionend();
+    void OnBtnClickedInfo();
 
 private:
     Ui::MainWindow* ui;
-    QString curSurveyorName, curFarmId;
+    QString curSurveyorName, curFarmId, curFarmName;
 
-    QAction *actionfillinformation;
-    QAction *actionmanageplan;
-    QAction *actioninquire;
-    QAction *actiongeneratereports;
-    QAction *actionstop;
-    QAction *actionstatus;
-    QPushButton *gather_btn;
-    QPushButton *stop_btn;
-    QTableWidget *table1;
+    FillInformation* fillinformation_window;
+    Manageplan* manageplan_window;
 };
 
 #endif // MAINWINDOW_H

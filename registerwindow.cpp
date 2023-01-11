@@ -36,33 +36,41 @@ void Registerwindow::OnBtnClickedOk() {
         return;
     }
 
-    model->setTable("surveyors");
-    model->setFilter(QString("SurveyorName = '%1'").arg(username_input));
-    model->select();
-    if (!model->rowCount()) {
-        // 不存在同名注册用户
-        model->setTable("windfarm");
-        model->setFilter(QString("FarmName = '%1'").arg(wind_farm_name_input));
-        model->select();
-        int setFarmId = -1, id = -1;
-        if (!model->rowCount()) {
-            // 无当前发电厂 插入数据库
-            model->select();
-            int rowNum = model->rowCount(); //获得表的行数
-            id = rowNum;
-            model->insertRow(rowNum); //添加一行
-            model->setData(model->index(rowNum, 0), id);
-            // TODO insert farm
-            model->setData(model->index(rowNum, 0), "Farm");
-            model->submitAll();
+    QSqlQuery query;
+    QString sqlStr;
+    sqlStr = QString("SELECT SurveyorID from surveyors where SurveyorName = '%1';").arg(username_input);
+    if (!query.exec(sqlStr)) { qDebug() << "line 42: " << query.lastError(); return; }
+    int farmid = 0;
+    if (!query.size()) { // 新用户
+        sqlStr = QString("SELECT FarmID FROM windfarm WHERE FarmName= '%1'").arg(wind_farm_name_input);
+        if (query.exec(sqlStr) && !query.size()) { // 插入新电厂
+            if (!query.exec("select Max(FarmID) from windfarm")) { qDebug() << "line 47: " << query.lastError(); return; }
+            int id = 0;
+            if (query.next()) { id = query.value(0).toInt() + 1; }
+            sqlStr = QString("INSERT INTO windfarm (FarmName) VALUES (%1);").arg(wind_farm_name_input);
+            if (!query.exec(sqlStr)) { qDebug() << "line 51: " << query.lastError(); return; }
+            farmid = id;
         } else {
-            // QSqlRecord record = model->record(0);
-            // setFarmId = record->value(0);
+            if (!query.isActive()) { qDebug() << "line 54: " << query.lastError(); return; }
+            if (query.next()) { farmid = query.value(0).toInt(); qDebug() << farmid; }
         }
-        // TODO Insert surveyors
+        query.prepare("INSERT INTO surveyors (SurveyorName, PassWord, FarmID, Position) VALUES (:SurveyorName, :PassWord, :FarmID, :Position);");
+        query.bindValue(":SurveyorName", username_input);
+        query.bindValue(":PassWord", password_input);
+        query.bindValue(":FarmID", farmid);
+        query.bindValue(":Position", 101010);
+        if (!query.exec(sqlStr)) {
+            qDebug() << "line 60: " << query.lastError();
+            QMessageBox::information(this, "错误", "注册失败", QMessageBox::Yes);
+            return;
+        } else {
+            QMessageBox::information(this, "提示", "注册成功", QMessageBox::Yes);
+            return;
+        }
     } else {
         QMessageBox::information(this, "提示", "此用户已注册", QMessageBox::Yes);
     }
+    return;
 }
 
 void Registerwindow::OnBtnClickedCancel() {

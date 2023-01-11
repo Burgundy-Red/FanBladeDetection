@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
+ <class>FillInformationWindow</class>
  <widget class="QWidget" name="Form">
   <property name="geometry">
    <rect>
@@ -31,7 +31,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="QTableWidget" name="tableWidget">
+        <widget class="QTableWidget" name="turbine_table">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -43,6 +43,12 @@
            <width>707</width>
            <height>757</height>
           </size>
+         </property>
+         <property name="rowCount">
+          <number>0</number>
+         </property>
+         <property name="columnCount">
+          <number>4</number>
          </property>
          <column>
           <property name="text">
@@ -93,9 +99,9 @@
             <property name="geometry">
              <rect>
               <x>9</x>
-              <y>9</y>
+              <y>29</y>
               <width>391</width>
-              <height>371</height>
+              <height>351</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -109,7 +115,7 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QTextBrowser" name="textBrowser">
+                <widget class="QTextBrowser" name="windfarm_text">
                  <property name="maximumSize">
                   <size>
                    <width>220</width>
@@ -126,7 +132,7 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QLineEdit" name="LineEdit">
+                <widget class="QLineEdit" name="machine_le">
                  <property name="maximumSize">
                   <size>
                    <width>220</width>
@@ -143,7 +149,7 @@
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QComboBox" name="ComboBox">
+                <widget class="QComboBox" name="turbineType_combo">
                  <property name="maximumSize">
                   <size>
                    <width>220</width>
@@ -160,7 +166,7 @@
                 </widget>
                </item>
                <item row="3" column="1">
-                <widget class="QLineEdit" name="LineEdit_2">
+                <widget class="QLineEdit" name="bladeLength">
                  <property name="maximumSize">
                   <size>
                    <width>220</width>
@@ -177,7 +183,7 @@
                 </widget>
                </item>
                <item row="4" column="1">
-                <widget class="QLineEdit" name="LineEdit_3">
+                <widget class="QLineEdit" name="wheelsHeight">
                  <property name="maximumSize">
                   <size>
                    <width>220</width>
@@ -191,7 +197,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
-                <widget class="QPushButton" name="pushButton_2">
+                <widget class="QPushButton" name="addTurbine_btn">
                  <property name="minimumSize">
                   <size>
                    <width>245</width>
@@ -259,7 +265,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_3">
+                <widget class="QPushButton" name="searchTurbine_btn">
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
@@ -276,7 +282,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_6">
                <item>
-                <widget class="QPushButton" name="pushButton_4">
+                <widget class="QPushButton" name="deleteTurbine_btn">
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
@@ -289,7 +295,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_5">
+                <widget class="QPushButton" name="changeTurbineInfo_btn">
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>

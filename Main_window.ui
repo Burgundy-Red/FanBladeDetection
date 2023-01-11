@@ -144,18 +144,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QTextBrowser" name="fannum_tb">
-            <property name="minimumSize">
-             <size>
-              <width>90</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>90</width>
-              <height>30</height>
-             </size>
+           <widget class="QComboBox" name="fanNum_combo">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
            </widget>
           </item>

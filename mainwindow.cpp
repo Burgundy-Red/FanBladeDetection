@@ -7,67 +7,84 @@ Mainwindow::Mainwindow()
     ui = new Ui::MainWindow();
     ui->setupUi(this);
 
-    // 创建菜单栏
-//    actionfillinformation = ui->action1;
-//    actionmanageplan = new QAction("管理计划", this);
-//    actioninquire = new QAction("查询", this);
-//    actiongeneratereports = new QAction("生成报告", this);
-//    actionstop = new QAction("停止", this);
-//    actionstatus = new QAction("状态", this);
-
-
-
+    this->fillinformation_window = new FillInformation();
+    this->manageplan_window = new Manageplan();
     // 连接信号和槽
-//    connect(actionfillinformation, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
-//    connect(actionmanageplan, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
-//    connect(actioninquire, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
-//    connect(actiongeneratereports, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
-//    connect(actionstop, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
-//    connect(actionstatus, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
+    connect(this, &Mainwindow::toFillInformation, fillinformation_window, &FillInformation::fromMainwindow);
+
+    connect(ui->action_fillinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
+    connect(ui->action_manage, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
+    connect(ui->action_querylog, &QAction::triggered, this, &Mainwindow::OnBtnClickedQuerylog);
+    connect(ui->action_genreport, &QAction::triggered, this, &Mainwindow::OnBtnClickedGenReport);
+    connect(ui->action_curactionend, &QAction::triggered, this, &Mainwindow::OnBtnClickedActionend);
+    connect(ui->action_curinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedInfo);
+
 //    connect(gather_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedGather);
 //    connect(stop_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedStop);
 //    connect(table1, &QTableWidget::itemClicked, this, &Mainwindow::show_data1);
 }
 
 Mainwindow::~Mainwindow() {
+    delete fillinformation_window;
+    delete manageplan_window;
+
     delete ui;
-}
-
-void Mainwindow::curLogin(QString v1, QString v2) {
-    // 信息传过来了
-    this->curSurveyorName = v1;
-    this->curFarmId = v2;
-
-    // 就可以在ui对应地方设置姓名等
-    // ui->info->setText(v1);
 }
 
 void Mainwindow::OnBtnClickedFillinformation()
 {
-    //...
+    // 阻塞主窗口，实现子窗口不关闭无法操作父窗口
+    this->fillinformation_window->setWindowModality(Qt::ApplicationModal);
+    emit toFillInformation(this->curSurveyorName, this->curFarmId);
+    this->fillinformation_window->show();
 }
 
 void Mainwindow::OnBtnClickedManageplan()
 {
-    //...
+    // 阻塞主窗口，实现子窗口不关闭无法操作父窗口
+    this->manageplan_window->setWindowModality(Qt::ApplicationModal);
+    this->manageplan_window->show();
 }
 
-void Mainwindow::OnBtnClickedStatus()
+void Mainwindow::OnBtnClickedQuerylog()
 {
     //...
 }
 
-void Mainwindow::OnBtnClickedGather()
+void Mainwindow::OnBtnClickedGenReport()
 {
     //...
 }
 
-void Mainwindow::OnBtnClickedStop()
+void Mainwindow::OnBtnClickedActionend()
 {
     //...
 }
 
-void Mainwindow::show_data1()
+void Mainwindow::OnBtnClickedInfo()
 {
-    //...
+    QToolTip::showText(QCursor::pos(),
+                       "操作员: " + this->curSurveyorName + "\n"
+                       "电厂:   " + this->curFarmName);
 }
+
+
+void Mainwindow::curLogin(QString v1, QString v2)
+{
+    // 信息传过来了
+    this->curSurveyorName = v1;
+    this->curFarmId = v2;
+    this->curFarmName = "";
+
+    QString strSql = QString("SELECT FarmName FROM windfarm WHERE FarmID='%1';").arg(this->curFarmId);
+    QSqlQuery query;
+    if (!query.exec(strSql)) { qDebug() << "line 80: " << query.lastError(); return; };
+    if (query.next()) { this->curFarmName = query.value(0).toString(); }
+
+    strSql = QString("SELECT DISTINCT FanNum FROM fan WHERE FarmID='%1';").arg(this->curFarmId);
+    if (!query.exec(strSql)) { qDebug() << "line 85: " << query.lastError(); return; };
+    while (query.next()) {
+        ui->fanNum_combo->addItem(query.value(0).toString());
+    }
+}
+

@@ -7,6 +7,9 @@
 #include <QSqlTableModel>
 #include <QMessageBox>
 #include <QSqlQueryModel>
+#include <QSqlQuery>
+#include <QDebug>
+#include <QSqlError>
 
 namespace Ui {
     class RegisterWindow;
