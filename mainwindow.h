@@ -24,6 +24,7 @@ public:
     ~Mainwindow();
 
 signals:
+    void toManageplanwindowInfo(QString, QString);
 
 public slots:
     void curLogin(QString, QString);

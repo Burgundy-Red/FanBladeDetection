@@ -6,7 +6,7 @@ Mainwindow::Mainwindow()
 {
     ui = new Ui::MainWindow();
     ui->setupUi(this);
-
+    manageplan_window = new Manageplan();
     // 创建菜单栏
 //    actionfillinformation = ui->action1;
 //    actionmanageplan = new QAction("管理计划", this);
@@ -18,12 +18,14 @@ Mainwindow::Mainwindow()
 
 
     // 连接信号和槽
-//    connect(actionfillinformation, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
-//    connect(actionmanageplan, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
-//    connect(actioninquire, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
-//    connect(actiongeneratereports, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
-//    connect(actionstop, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
-//    connect(actionstatus, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
+//    connect(ui->action_fillinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
+    connect(ui->action_manage, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
+    connect(this, SIGNAL(toManageplanwindowInfo(QString, QString)), manageplan_window, SLOT(curLogin(QString, QString)));
+//    emit toManageplanwindowInfo(this->curFarmId, this->curSurveyorName);  // 在这里释放信号
+//    connect(ui->action_querylog, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
+//    connect(ui->action_genreport, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
+//    connect(ui->action_curactionend, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
+    connect(ui->action_curinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedStatus);
 //    connect(gather_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedGather);
 //    connect(stop_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedStop);
 //    connect(table1, &QTableWidget::itemClicked, this, &Mainwindow::show_data1);
@@ -50,8 +52,11 @@ void Mainwindow::OnBtnClickedFillinformation()
 
 void Mainwindow::OnBtnClickedManageplan()
 {
-    manageplan_window = new Manageplan();
+//    manageplan_window = new Manageplan();
+    emit toManageplanwindowInfo(this->curFarmId, this->curSurveyorName);
     manageplan_window->show();
+//    connect(this, SIGNAL(toManageplanwindowInfo(QString, QString)), manageplan_window, SLOT(curLogin(QString, QString)));
+    // qvariant -> qstring toString
 }
 
 void Mainwindow::OnBtnClickedStatus(){
