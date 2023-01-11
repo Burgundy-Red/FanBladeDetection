@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QSharedDataPointer>
 #include <QWidget>
+#include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -12,6 +13,9 @@
 #include <QTableWidgetItem>
 #include <QSqlRecord>
 #include <QMessageBox>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDate>
 
 namespace Ui {
 class ManageplanWindow;
@@ -32,14 +36,16 @@ private slots:
     void OnBtnClickedDelateplan();
 
 public slots:
-    void curLogin(QString, QString);
+    void fromMainwindow(QString, QString);
 
 private:
     Ui::ManageplanWindow *ui;
     QSqlTableModel *model;
-    QString curSurveyorName, curFarmId;
+    QString surveyorId,surveyorName, farmId, farmName;
 
     void UpdatePlanList();
+    void mysetupUi();
+    void show_data(QModelIndex Item);
 
 };
 

@@ -11,11 +11,12 @@ Mainwindow::Mainwindow()
     this->manageplan_window = new Manageplan();
     // 连接信号和槽
     connect(this, &Mainwindow::toFillInformation, fillinformation_window, &FillInformation::fromMainwindow);
+    connect(this, &Mainwindow::toManageplanwindowInfo, manageplan_window, &Manageplan::fromMainwindow);
 
     connect(ui->action_fillinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
     connect(ui->action_manage, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
-    connect(this, SIGNAL(toManageplanwindowInfo(QString, QString)), manageplan_window, SLOT(curLogin(QString, QString)));
-    //    emit toManageplanwindowInfo(this->curFarmId, this->curSurveyorName);  // 在这里释放信号
+//    connect(this, SIGNAL(toManageplanwindowInfo(QString, QString)), this->manageplan_window, SLOT(curLogin(QString, QString)));
+//    emit toManageplanwindowInfo(this->curFarmId, this->curSurveyorName);  // 在这里释放信号
 
     connect(ui->action_querylog, &QAction::triggered, this, &Mainwindow::OnBtnClickedQuerylog);
     connect(ui->action_genreport, &QAction::triggered, this, &Mainwindow::OnBtnClickedGenReport);
@@ -46,6 +47,7 @@ void Mainwindow::OnBtnClickedManageplan()
 {
     // 阻塞主窗口，实现子窗口不关闭无法操作父窗口
     this->manageplan_window->setWindowModality(Qt::ApplicationModal);
+    emit toManageplanwindowInfo(this->curSurveyorName, this->curFarmId);
     this->manageplan_window->show();
 }
 
