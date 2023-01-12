@@ -21,15 +21,16 @@ SOURCES += \
     Mainwindow.cpp \
     registerwindow.cpp \
     manageplan.cpp \
-    fillinformation.cpp
+    fillinformation.cpp \
+    querylog.cpp
 
 HEADERS += \
     Login.h \
     Mainwindow.h \
     registerwindow.h \
     manageplan.h \
-    fillinformation.h
-
+    fillinformation.h \
+    querylog.h
 
 FORMS += \
     Login.ui \
@@ -37,7 +38,9 @@ FORMS += \
     Manageplan.ui \
     RegisteredUser.ui \
     FillInformation.ui \
-    Manageplan.ui
+    Manageplan.ui \
+    Querylog.ui
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
