@@ -9,9 +9,12 @@ Mainwindow::Mainwindow()
 
     this->fillinformation_window = new FillInformation();
     this->manageplan_window = new Manageplan();
+    this->querylog_window = new Querylog();
+
     // 连接信号和槽
     connect(this, &Mainwindow::toFillInformation, fillinformation_window, &FillInformation::fromMainwindow);
     connect(this, &Mainwindow::toManageplanwindowInfo, manageplan_window, &Manageplan::fromMainwindow);
+    connect(this, &Mainwindow::toQuerylog, querylog_window, &Querylog::fromMainwindow);
 
     connect(ui->action_fillinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
     connect(ui->action_manage, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
@@ -22,9 +25,13 @@ Mainwindow::Mainwindow()
     connect(ui->action_genreport, &QAction::triggered, this, &Mainwindow::OnBtnClickedGenReport);
     connect(ui->action_curactionend, &QAction::triggered, this, &Mainwindow::OnBtnClickedActionend);
     connect(ui->action_curinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedInfo);
+
 //    connect(gather_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedGather);
 //    connect(stop_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedStop);
 //    connect(table1, &QTableWidget::itemClicked, this, &Mainwindow::show_data1);
+
+    // 子窗口和父窗口连接
+    connect(querylog_window, SIGNAL(toMainwindowTestplanId(QString)), this, SLOT(fromQuerylogTestplanId(QString)));
 
 }
 
@@ -53,7 +60,9 @@ void Mainwindow::OnBtnClickedManageplan()
 
 void Mainwindow::OnBtnClickedQuerylog()
 {
-    //...
+    this->querylog_window->setWindowModality(Qt::ApplicationModal);
+    emit toQuerylog(this, this->curSurveyorName, this->curFarmId);
+    this->querylog_window->show();
 }
 
 void Mainwindow::OnBtnClickedGenReport()
@@ -86,10 +95,16 @@ void Mainwindow::curLogin(QString v1, QString v2)
     if (!query.exec(strSql)) { qDebug() << "line 80: " << query.lastError(); return; };
     if (query.next()) { this->curFarmName = query.value(0).toString(); }
 
-    strSql = QString("SELECT DISTINCT FanNum FROM fan WHERE FarmID='%1';").arg(this->curFarmId);
-    if (!query.exec(strSql)) { qDebug() << "line 85: " << query.lastError(); return; };
-    while (query.next()) {
-        ui->fanNum_combo->addItem(query.value(0).toString());
-    }
+//    strSql = QString("SELECT DISTINCT FanNum FROM fan WHERE FarmID='%1';").arg(this->curFarmId);
+//    if (!query.exec(strSql)) { qDebug() << "line 85: " << query.lastError(); return; };
+//    while (query.next()) {
+//        ui->fanNum_combo->addItem(query.value(0).toString());
+//    }
+}
+
+void Mainwindow::fromQuerylogTestplanId(QString v) {
+    this->testplanId = v;
+
+    // testplanid -> fanid -> fannum
 }
 

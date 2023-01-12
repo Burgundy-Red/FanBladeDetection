@@ -6,8 +6,6 @@
 #include <QObject>
 #include <QWidget>
 #include <QMessageBox>
-
-#include "manageplan.h"
 #include <QPushButton>
 #include <QTableWidget>
 #include <QMessageBox>
@@ -16,6 +14,7 @@
 
 #include "fillinformation.h"
 #include "manageplan.h"
+#include "querylog.h"
 
 namespace  Ui {
     class MainWindow;
@@ -32,11 +31,12 @@ public:
 signals:
     void toFillInformation(QString, QString);
     void toManageplanwindowInfo(QString, QString);
+    void toQuerylog(QMainWindow*, QString, QString);
 
 public slots:
     void curLogin(QString, QString);
+    void fromQuerylogTestplanId(QString);
 
-private slots:
     void OnBtnClickedFillinformation();
     void OnBtnClickedManageplan();
     void OnBtnClickedQuerylog();
@@ -47,9 +47,11 @@ private slots:
 private:
     Ui::MainWindow* ui;
     QString curSurveyorName, curFarmId, curFarmName;
+    QString testplanId;
 
     FillInformation* fillinformation_window;
     Manageplan* manageplan_window;
+    Querylog* querylog_window;
 };
 
 #endif // MAINWINDOW_H

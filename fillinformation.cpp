@@ -111,6 +111,11 @@ void FillInformation::onSearchTurbineButtonClicked()
     QString Sqlstr, select;
     QString* Machines = new QString[4];
     select = ui->lineEdit->text();
+    if (select.isEmpty()) {
+        QMessageBox::warning(this, "Error", "请选择查询的机组");
+        return;
+    }
+
     int selectrecord;
     selectrecord = select.toInt();
     if (selectrecord == 0)													//未填写查找机组编号
@@ -150,7 +155,7 @@ void FillInformation::onDeleteTurbineButtonClicked()
 {
     QString SelectNum = ui->lineEdit->text(); // get the turbine number
     if (SelectNum.isEmpty()) {
-        QMessageBox::warning(this, "Error", "Please select a turbine to delete");
+        QMessageBox::warning(this, "Error", "请选择删除机组");
         return;
     }
     int serMachineNum = SelectNum.toInt();
@@ -326,13 +331,106 @@ void FillInformation::onDeleteTurbineButtonClicked()
 
 void FillInformation::onChangeTurbineInfoButtonClicked()
 {
-    // Do something
+    //Qt code snippet
+    QString blades, type, length, height;
+    QString Sqlstr;
+    blades = ui->machine_le->text();
+    type = ui->turbineType_combo->currentText();
+    length = ui->bladeLength->text();
+    height = ui->wheelsHeight->text();
+    int selectrecord, bladelength, wheelheighnt;
+    bladelength = length.toInt();
+    wheelheighnt = height.toInt();
+    QString tmpFanID, tmpFanNUM;
+
+    Sqlstr = QString("SELECT FanID FROM fan WHERE FanType= '%1'LIMIT 1").arg(type);
+    QSqlQuery query;
+    if(!query.exec(Sqlstr)){
+        qDebug()<<"line 349: "<<query.lastError().text();
+        return;
+    }
+    while (query.next()) {
+        tmpFanID = query.value("FanID").toString();
+    }
+    Sqlstr = QString("SELECT FanNum FROM fan WHERE FanNum= '%1' AND FanType= '%2'LIMIT 1").arg(blades, type);
+    if(!query.exec(Sqlstr)){
+        qDebug()<<"line 357: "<<query.lastError().text();
+        return;
+    }
+    while (query.next()) {
+        tmpFanNUM = query.value(0).toString();
+    }
+
+    if (type == "" || length == "" || height == "")
+    {
+        QMessageBox::warning(this,"提示","填写信息不完整");
+        return;
+    }
+    if (bladelength == 0 || wheelheighnt == 0)
+    {
+        QMessageBox::warning(this,"错误","叶片长度或轮毂高度填写不正确");
+        return;
+    }
+    if (bladelength >= wheelheighnt)
+    {
+        QMessageBox::warning(this,"错误","叶片长度应小于轮毂高度");
+        return;
+    }
+
+    if (tmpFanID == "")
+    {
+        int res;
+        query.prepare("INSERT INTO fan (FanNum,BladeLength,WheelHubHeight,FanType) VALUES (:blades, :length, :height, :type)");
+        query.bindValue(":blades", blades);
+        query.bindValue(":length", length);
+        query.bindValue(":height", height);
+        query.bindValue(":type", type);
+        if(!query.exec()) {
+            qDebug() << "line 389: " << query.lastError().text();
+            QMessageBox::warning(this,"提示","新增机型信息失败");
+            return;
+        }
+        else
+        {
+            QMessageBox::warning(this,"提示","新增机型信息成功");
+            RefreshWindTurbineInformation();
+            ui->turbineType_combo->setCurrentText(type);
+            ui->bladeLength->setText(length);
+            ui->wheelsHeight->setText(height);
+            return;
+        }
+    }
+    else
+    {
+        if (tmpFanNUM != "")
+        {
+            query.prepare("UPDATE fan SET BladeLength= :length,WheelHubHeight= :height WHERE FanType= :type");
+            query.bindValue(":length", length);
+            query.bindValue(":height", height);
+            query.bindValue(":type", type);
+            if(!query.exec()) {
+                qDebug() << "Error: " << query.lastError().text();
+                QMessageBox::warning(this,"提示","机型信息更改失败");
+                return;
+            }
+            else
+            {
+                QMessageBox::warning(this,"提示","机型信息更改成功");
+                RefreshWindTurbineInformation();
+                ui->turbineType_combo->setCurrentText(type);
+                ui->bladeLength->setText(length);
+                ui->wheelsHeight->setText(height);
+                return;
+            }
+        }
+    }
 }
 
 void FillInformation::fromMainwindow(QString v1, QString v2) {
     this->surveyorName = v1;
-    this->farmName = v2;
+    this->farmId = v2;
     qDebug() << v1 << v2;
+
     InitWindTurbineInfo();
 }
 
