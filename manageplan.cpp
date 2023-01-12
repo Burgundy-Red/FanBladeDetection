@@ -256,7 +256,7 @@ void Manageplan::OnBtnClickedStartplan(){
        QMessageBox::information(this, "提示", "此计划已完成", QMessageBox::Yes);
        return;
    }
-   emit toMainwindow(planName);
+   emit toMainwindow(planName,planID);
    this->close();
 }
 

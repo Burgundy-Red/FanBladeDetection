@@ -36,7 +36,7 @@ signals:
 public slots:
     void curLogin(QString, QString);
     void fromQuerylogTestplanId(QString);
-    void fromManageplanwindow(QString);
+    void fromManageplanwindow(QString, QString);
 
     void OnBtnClickedFillinformation();
     void OnBtnClickedManageplan();
@@ -53,6 +53,8 @@ private:
     FillInformation* fillinformation_window;
     Manageplan* manageplan_window;
     Querylog* querylog_window;
+    void showtable1();
+    void mysetupUi();
 };
 
 #endif // MAINWINDOW_H

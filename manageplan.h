@@ -34,7 +34,7 @@ public:
 
 signals:
     void toModifyplanwindow(QString, QString, QString, QString);
-    void toMainwindow(QString);
+    void toMainwindow(QString, QString);
 
 private slots:
     void OnBtnClickedNewplan();
