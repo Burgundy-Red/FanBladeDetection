@@ -15,6 +15,7 @@ Mainwindow::Mainwindow()
     connect(this, &Mainwindow::toFillInformation, fillinformation_window, &FillInformation::fromMainwindow);
     connect(this, &Mainwindow::toManageplanwindowInfo, manageplan_window, &Manageplan::fromMainwindow);
     connect(this, &Mainwindow::toQuerylog, querylog_window, &Querylog::fromMainwindow);
+    connect(manageplan_window, &Manageplan::toMainwindow, this, &Mainwindow::fromManageplanwindow);
 
     connect(ui->action_fillinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
     connect(ui->action_manage, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
@@ -40,6 +41,10 @@ Mainwindow::~Mainwindow() {
     delete manageplan_window;
 
     delete ui;
+}
+
+void Mainwindow::fromManageplanwindow(QString planName){
+    this->curPlanName = planName;
 }
 
 void Mainwindow::OnBtnClickedFillinformation()
@@ -78,8 +83,10 @@ void Mainwindow::OnBtnClickedActionend()
 void Mainwindow::OnBtnClickedInfo()
 {
     QToolTip::showText(QCursor::pos(),
-                       "操作员: " + this->curSurveyorName + "\n"
-                       "电厂:   " + this->curFarmName);
+                       "操  作  员: " + this->curSurveyorName + "\n"
+                       "电       厂: " + this->curFarmName + "\n"
+                       "当前计划: " + this->curPlanName
+                       );
 }
 
 

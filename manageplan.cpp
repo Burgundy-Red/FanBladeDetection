@@ -10,7 +10,15 @@ Manageplan::Manageplan(QWidget *parent) : QMainWindow(parent),
     model=new QSqlTableModel(this);
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
-//    UpdatePlanList();
+    this->modifyplan_window = new Modifyplan();
+
+    /*
+    无论是主窗口向子窗口发送信号，还是子窗口向主窗口发送信号。
+    连接信号槽语句connect都是写在主窗口中，前两个参数为发送者及对应信号，后两个参数为接收者及对应槽函数。
+    */
+    connect(this, &Manageplan::toModifyplanwindow, modifyplan_window, &Modifyplan::fromManageplanwindow);
+    connect(modifyplan_window, &Modifyplan::toManageplanwindow, this, &Manageplan::fromModifyplanwindow);
+
     connect(ui->newplan_btn,SIGNAL(clicked()),this,SLOT(OnBtnClickedNewplan()));
     connect(ui->startplan_btn,SIGNAL(clicked()),this,SLOT(OnBtnClickedStartplan()));
     connect(ui->changeplan_btn,SIGNAL(clicked()),this,SLOT(OnBtnClickedChangeplan()));
@@ -42,7 +50,10 @@ void Manageplan::fromMainwindow(QString v1, QString v2) {
         this->surveyorId = query.value(0).toString();
     }
     qDebug()<<farmId<<farmName<<this->surveyorId<<strSql;
+}
 
+void Manageplan::fromModifyplanwindow(){
+    UpdatePlanList();
 }
 
 void Manageplan::UpdatePlanList()
@@ -197,19 +208,73 @@ void Manageplan::OnBtnClickedNewplan()
 }
 
 void Manageplan::OnBtnClickedStartplan(){
-    QMessageBox::about(this,"about","点击启动计划");
-    //..
+    QString planName = ui->planname_le->text();
+    if (planName.isEmpty()) {
+        QMessageBox::information(this, "提示", "请填写计划名称", QMessageBox::Yes);
+        return;
+    }
+
+    // 查询 TestPlanID
+    QSqlQuery query;
+    QString sqlstr = "SELECT TestPlanID FROM testplan WHERE PlanName = '" + planName + "' AND FarmID = '" + farmId + "'";
+    if (!query.exec(sqlstr)) {
+        QMessageBox::critical(this, "错误", "执行查询失败", QMessageBox::Yes);
+        return;
+    }
+    if (!query.first()) {
+        QMessageBox::information(this, "提示", "请填写有效的检测计划或创建当前检测计划", QMessageBox::Yes);
+        return;
+    }
+    QString planID = query.value(0).toString();
+
+    // 查询 numOfUntest
+    sqlstr = "SELECT COUNT(*) FROM (SELECT test.FanID FROM test, fan WHERE fan.FanID IN (SELECT FanID FROM fan WHERE FarmID = '" + farmId + "') AND test.FanID IN (SELECT FanID FROM test WHERE TestState = '未检测' AND TestPlanID = '" + planID + "') AND fan.FanID = test.FanID AND TestPlanID = '" + planID + "') AS defectiveNum";
+    if (!query.exec(sqlstr)) {
+        QMessageBox::critical(this, "错误", "执行查询失败", QMessageBox::Yes);
+        return;
+    }
+    if (!query.first()) {
+        QMessageBox::critical(this, "错误", "未检索到符合条件的数据", QMessageBox::Yes);
+        return;
+    }
+    int numOfUntest = query.value(0).toInt();
+
+    // 查询 TestingNum
+    sqlstr = "SELECT COUNT(*) FROM (SELECT fan.FanNum FROM fan WHERE fan.FanID IN (SELECT FanID FROM test WHERE TestPlanID = '" + planID + "' AND TestState = '正在检测')) AS numOfTesting";
+    if (!query.exec(sqlstr)) {
+        QMessageBox::critical(this, "错误", "执行查询失败", QMessageBox::Yes);
+        return;
+    }
+    if (!query.first()) {
+        QMessageBox::critical(this, "错误", "未检索到符合条件的数据", QMessageBox::Yes);
+        return;
+    }
+    int testingNum = query.value(0).toInt();
+
+   // 判断是否已完成
+   if (numOfUntest == 0 && testingNum == 0) {
+       QMessageBox::information(this, "提示", "此计划已完成", QMessageBox::Yes);
+       return;
+   }
+   emit toMainwindow(planName);
+   this->close();
 }
 
 void Manageplan::OnBtnClickedChangeplan(){
-    QMessageBox::about(this,"about","点击修改计划");
+    this->modifyplan_window->setWindowModality(Qt::ApplicationModal);
+    QString PlanName = ui->planname_le->text();
+    QString Sqlstr = "SELECT TestPlanID FROM testplan WHERE PlanName= '" + PlanName + "'AND FarmID = '" + farmId + "'";
+    QSqlQuery query;
+    if(!query.exec((Sqlstr))||!query.next()){
+        QMessageBox::information(this, "提示", "请选择正确的计划", QMessageBox::Yes);
+        return;
+    }
+    QString planID = query.value(0).toString();
+
+    emit toModifyplanwindow(planID, PlanName, farmId, surveyorId);
+    this->modifyplan_window->show();
     //..
 }
-
-//void Manageplan::OnBtnClickedDelateplan(){
-//    QMessageBox::about(this,"about","点击删除计划");
-//    //..
-//}
 
 void Manageplan::OnBtnClickedDelateplan() {
     QString PlanName = ui->planname_le->text();
