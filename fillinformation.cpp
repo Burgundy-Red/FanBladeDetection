@@ -6,8 +6,9 @@ FillInformation::FillInformation(QWidget *parent) : QWidget(parent),
 {
     ui->setupUi(this);
 
-    ui->turbine_table->setWordWrap(false); // 不可省略
-    ui->turbine_table->setTextElideMode(Qt::TextElideMode::ElideLeft);
+    //显示行号列
+    QHeaderView* headerView = ui->turbine_table->verticalHeader();
+    headerView->setHidden(true); //false 显示行号列  true Hide
 
     connect(ui->addTurbine_btn, &QPushButton::clicked, this, &FillInformation::onAddTurbineButtonClicked);
     connect(ui->turbineType_combo, SIGNAL(currentIndexChanged(int)), this, SLOT(onWindTurbineTypeComboIndexChanged(int)));
@@ -426,26 +427,25 @@ void FillInformation::onChangeTurbineInfoButtonClicked()
     }
 }
 
-void FillInformation::fromMainwindow(QString v1, QString v2) {
-    this->surveyorName = v1;
-    this->farmId = v2;
-    qDebug() << v1 << v2;
-
-    InitWindTurbineInfo();
-}
-
 void FillInformation::InitWindTurbineInfo() {
     QSqlQuery query;
     QString strSql, serFarmID, strFarmName;
     strSql = QString("SELECT FarmID FROM surveyors WHERE SurveyorName='%1';").arg(this->surveyorName);
-    query.exec(strSql);
+    if(!query.exec(strSql)) {
+        qDebug() << "line 435: " << query.lastError().text();
+        return;
+    }
     if (query.next()) { serFarmID = query.value(0).toString(); }
     strSql = QString("SELECT FarmName FROM windfarm WHERE FarmID= '%1';").arg(this->farmId);
-    query.exec(strSql);
+    if(!query.exec(strSql)) {
+        qDebug() << "line 442: " << query.lastError().text();
+        return;
+    }
     if (query.next()) { strFarmName = query.value(0).toString(); }
     ui->windfarm_text->setText(strFarmName);
     if (!strFarmName.isEmpty()) {
         this->farmName = strFarmName;
+        qDebug() << "line 449 success.";
         RefreshWindTurbineInformation();
     }
 
@@ -471,29 +471,59 @@ void FillInformation::InitWindTurbineInfo() {
 
 void FillInformation::RefreshWindTurbineInformation()
 {
+    qDebug() << "line 474 success.";
     ui->turbine_table->clearContents();
     QSqlQuery query;
     QString numOfMachines, Sqlstr;
     Sqlstr = QString("SELECT COUNT(*) FROM (SELECT FanNum,FanType,BladeLength AND WheelHubHeight FROM fan WHERE FarmID= (SELECT FarmID FROM windfarm WHERE FarmName= '%1'))AS numOfFFBW").arg(this->farmName);
-    query.exec(Sqlstr);
+    if(!query.exec(Sqlstr)) {
+        qDebug() << "line 480: " << query.lastError().text();
+        return;
+    }
     int MachinesNum;
     if (query.next()) { MachinesNum = query.value(0).toInt(); }
+
     QString* Machines = new QString[MachinesNum * 4];
     Sqlstr = QString("SELECT FanNum, FanType, BladeLength, WheelHubHeight FROM fan WHERE FarmID= (SELECT FarmID FROM windfarm WHERE FarmName= '%1')").arg(this->farmName);
-    query.exec(Sqlstr);
+    if(!query.exec(Sqlstr)) {
+        qDebug() << "line 488: " << query.lastError().text();
+        return;
+    }
     int i = 0;
     while (query.next()) {
         for (int j = 0; j < 4; j++) {
             Machines[i++] = query.value(j).toString();
         }
     }
+
     int count = 0;
     for (int i = 0; i < MachinesNum; i++) {
         ui->turbine_table->insertRow(i);
         for (int j = 0; j < 4; j++) {
             ui->turbine_table->setItem(i, j, new QTableWidgetItem(Machines[i*4 + j]));
+
+        }
+    }
+
+    // 居中显示
+    int nCount = ui->turbine_table->rowCount();
+    int nClumn = ui->turbine_table->columnCount();
+    for (int n = 0; n < nCount;n++) {
+        for (int m = 0; m < nClumn;m++) {
+            // 判断 null
+            if (ui->turbine_table->item(n,m))
+                ui->turbine_table->item(n,m)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         }
     }
     delete[] Machines;
+}
+
+
+void FillInformation::fromMainwindow(QString v1, QString v2) {
+    this->surveyorName = v1;
+    this->farmId = v2;
+    qDebug() << "fromMainwindow" << v1 << v2;
+
+    InitWindTurbineInfo();
 }
 

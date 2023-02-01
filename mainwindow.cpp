@@ -11,6 +11,13 @@ Mainwindow::Mainwindow()
     this->manageplan_window = new Manageplan();
     this->querylog_window = new Querylog();
 
+    // turbine_table 不显示行号
+    QHeaderView* headerView = ui->turbine_table->verticalHeader();
+    headerView->setHidden(true); //false 显示行号列  true Hide
+    // defect_table 不显示行号
+    QHeaderView* headerView1 = ui->defect_table->verticalHeader();
+    headerView1->setHidden(true); //false 显示行号列  true Hide
+
     // 连接信号和槽
     connect(this, &Mainwindow::toFillInformation, fillinformation_window, &FillInformation::fromMainwindow);
     connect(this, &Mainwindow::toQuerylog, querylog_window, &Querylog::fromMainwindow);
@@ -30,7 +37,8 @@ Mainwindow::Mainwindow()
 //    connect(table1, &QTableWidget::itemClicked, this, &Mainwindow::show_data1);
 
     // 子窗口和父窗口连接
-    connect(querylog_window, SIGNAL(toMainwindowTestplanId(QString)), this, SLOT(fromQuerylogTestplanId(QString)));
+    // 查询检测记录
+    connect(querylog_window, SIGNAL(toMainwindowTestplanId(QString, QString)), this, SLOT(fromQuerylogTestplanId(QString, QString)));
 
 }
 
@@ -59,7 +67,7 @@ void Mainwindow::OnBtnClickedManageplan()
 void Mainwindow::OnBtnClickedQuerylog()
 {
     this->querylog_window->setWindowModality(Qt::ApplicationModal);
-    emit toQuerylog(this, this->curSurveyorName, this->curFarmId);
+    emit toQuerylog(this->curSurveyorName, this->curFarmId);
     this->querylog_window->show();
 }
 
@@ -100,9 +108,51 @@ void Mainwindow::curLogin(QString v1, QString v2)
 //    }
 }
 
-void Mainwindow::fromQuerylogTestplanId(QString v) {
-    this->testplanId = v;
+void Mainwindow::fromQuerylogTestplanId(QString testplanId, QString machineNum) {
+    this->testplanId = testplanId;
+    this->machineNum = machineNum;
+//    qDebug() << testplanId << machineNum;
+    ui->machineNum_le->setText(machineNum);
 
     // testplanid -> fanid -> fannum
+    QString sqlstr, surveyDate, testState;
+    QSqlQuery query;
+
+    // clear the list widget
+    ui->turbine_table->clearContents();
+
+    // get the survey date and test state from the database
+    sqlstr = "SELECT SurveyDate FROM test WHERE TestPlanID='" + testplanId + "' and FanID=(SELECT FanID FROM fan WHERE FanNum='" + machineNum + "')";
+    if (!query.exec(sqlstr)) {
+        qDebug() << "line 119: " << query.lastError();
+        return;
+    }
+    if (query.next()) {
+        surveyDate = query.value(0).toString();
+    }
+
+    sqlstr = "SELECT TestState FROM test WHERE TestPlanID='" + testplanId + "' and FanID=(SELECT FanID FROM fan WHERE FanNum='" + machineNum + "')";
+    if (!query.exec(sqlstr)) {
+        qDebug() << "Failed to execute the SQL statement: " << query.lastError();
+        return;
+    }
+    if (query.next()) {
+        testState = query.value(0).toString();
+    }
+
+    ui->turbine_table->insertRow(0);
+    ui->turbine_table->setItem(0, 0, new QTableWidgetItem(machineNum));
+    ui->turbine_table->setItem(0, 1, new QTableWidgetItem(testState));
+    ui->turbine_table->setItem(0, 2, new QTableWidgetItem(surveyDate));
+    int nCount = ui->turbine_table->rowCount();
+    // 居中显示
+    int nClumn = ui->turbine_table->columnCount();
+    for (int n = 0; n < nCount;n++)
+    {
+        for (int m = 0; m < nClumn ;m++)
+        {
+                ui->turbine_table->item(n,m)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        }
+    }
 }
 

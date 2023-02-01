@@ -144,19 +144,16 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="fanNum_combo">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+           <widget class="QLineEdit" name="machineNum_le">
+            <property name="enabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QTableWidget" name="table1">
+         <widget class="QTableWidget" name="turbine_table">
           <property name="minimumSize">
            <size>
             <width>100</width>
@@ -187,7 +184,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="table2">
+         <widget class="QTableWidget" name="defect_table">
           <property name="minimumSize">
            <size>
             <width>100</width>

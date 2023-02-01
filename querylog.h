@@ -26,10 +26,10 @@ public:
     void changeMachineCombo();
 
 signals:
-    void toMainwindowTestplanId(QString);
+    void toMainwindowTestplanId(QString, QString);
 
 public slots:
-    void fromMainwindow(QMainWindow*, QString, QString);
+    void fromMainwindow(QString, QString);
 
     void OnPlannameComboChange(const QString&);
     void OnBtnClickedOk();
@@ -38,7 +38,7 @@ public slots:
 private:
     Ui::QuerylogWindow* ui;
     QMainWindow* mainwindow;
-    QString surveyorName, farmId, selectedTestplanId;
+    QString surveyorName, farmId, selectedTestplanId, selectedMachineNum;
 
 };
 
