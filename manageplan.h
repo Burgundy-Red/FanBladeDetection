@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QSharedDataPointer>
 #include <QWidget>
+#include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -12,11 +13,17 @@
 #include <QTableWidgetItem>
 #include <QSqlRecord>
 #include <QMessageBox>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDate>
+
+#include "modifyplan.h"
 
 namespace Ui {
 class ManageplanWindow;
 }
 
+class Modifyplan;
 class Manageplan : public QMainWindow
 {
     Q_OBJECT
@@ -25,6 +32,10 @@ public:
     explicit Manageplan(QWidget *parent = nullptr);
      ~Manageplan();
 
+signals:
+    void toModifyplanwindow(QString, QString, QString, QString);
+    void toMainwindow(QString, QString);
+
 private slots:
     void OnBtnClickedNewplan();
     void OnBtnClickedStartplan();
@@ -32,14 +43,18 @@ private slots:
     void OnBtnClickedDelateplan();
 
 public slots:
-    void curLogin(QString, QString);
+    void fromMainwindow(QString, QString);
+    void fromModifyplanwindow();
 
 private:
     Ui::ManageplanWindow *ui;
     QSqlTableModel *model;
-    QString curSurveyorName, curFarmId;
+    QString surveyorId,surveyorName, farmId, farmName;
 
+    Modifyplan* modifyplan_window;
     void UpdatePlanList();
+    void mysetupUi();
+    void show_data(QModelIndex Item);
 
 };
 

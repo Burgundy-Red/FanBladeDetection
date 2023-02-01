@@ -36,6 +36,7 @@ signals:
 public slots:
     void curLogin(QString, QString);
     void fromQuerylogTestplanId(QString, QString);
+    void fromManageplanwindow(QString, QString);
 
     void OnBtnClickedFillinformation();
     void OnBtnClickedManageplan();
@@ -46,12 +47,15 @@ public slots:
 
 private:
     Ui::MainWindow* ui;
-    QString curSurveyorName, curFarmId, curFarmName;
+
     QString testplanId, machineNum;
+    QString curSurveyorName, curFarmId, curFarmName, curPlanName;
 
     FillInformation* fillinformation_window;
     Manageplan* manageplan_window;
     Querylog* querylog_window;
+    void showturbine_table();
+    void mysetupUi();
 };
 
 #endif // MAINWINDOW_H

@@ -5,10 +5,7 @@ FillInformation::FillInformation(QWidget *parent) : QWidget(parent),
     ui(new Ui::FillInformationWindow)
 {
     ui->setupUi(this);
-
-    //显示行号列
-    QHeaderView* headerView = ui->turbine_table->verticalHeader();
-    headerView->setHidden(true); //false 显示行号列  true Hide
+    mysetupUi();
 
     connect(ui->addTurbine_btn, &QPushButton::clicked, this, &FillInformation::onAddTurbineButtonClicked);
     connect(ui->turbineType_combo, SIGNAL(currentIndexChanged(int)), this, SLOT(onWindTurbineTypeComboIndexChanged(int)));
@@ -445,7 +442,6 @@ void FillInformation::InitWindTurbineInfo() {
     ui->windfarm_text->setText(strFarmName);
     if (!strFarmName.isEmpty()) {
         this->farmName = strFarmName;
-        qDebug() << "line 449 success.";
         RefreshWindTurbineInformation();
     }
 
@@ -471,8 +467,8 @@ void FillInformation::InitWindTurbineInfo() {
 
 void FillInformation::RefreshWindTurbineInformation()
 {
-    qDebug() << "line 474 success.";
-    ui->turbine_table->clearContents();
+    ui->turbine_table->setRowCount(0);  //把行数设为零
+    ui->turbine_table->clearContents(); //清空列表内容
     QSqlQuery query;
     QString numOfMachines, Sqlstr;
     Sqlstr = QString("SELECT COUNT(*) FROM (SELECT FanNum,FanType,BladeLength AND WheelHubHeight FROM fan WHERE FarmID= (SELECT FarmID FROM windfarm WHERE FarmName= '%1'))AS numOfFFBW").arg(this->farmName);
@@ -522,8 +518,22 @@ void FillInformation::RefreshWindTurbineInformation()
 void FillInformation::fromMainwindow(QString v1, QString v2) {
     this->surveyorName = v1;
     this->farmId = v2;
-    qDebug() << "fromMainwindow" << v1 << v2;
 
     InitWindTurbineInfo();
+}
+
+void FillInformation::mysetupUi()
+{
+    //显示行号列
+    QHeaderView* headerView = ui->turbine_table->verticalHeader();
+    headerView->setHidden(true); //false 显示行号列  true Hide
+
+    // Set some properties of the table
+    ui->turbine_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);  // Auto-adjust column width
+    ui->turbine_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);  // Manually adjust column width
+
+    ui->turbine_table->setSelectionMode(QAbstractItemView::SingleSelection);  // Only single selection allowed
+    ui->turbine_table->setSelectionBehavior(QAbstractItemView::SelectRows);  // Only entire rows can be selected
+    ui->turbine_table->setEditTriggers(QAbstractItemView::NoEditTriggers);   // Table is not editable
 }
 

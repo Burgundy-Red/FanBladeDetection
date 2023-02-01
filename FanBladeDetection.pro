@@ -20,6 +20,7 @@ SOURCES += \
     main.cpp \
     Login.cpp \
     Mainwindow.cpp \
+    modifyplan.cpp \
     registerwindow.cpp \
     manageplan.cpp \
     fillinformation.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     Login.h \
     Mainwindow.h \
     generatereport.h \
+    modifyplan.h \
     registerwindow.h \
     manageplan.h \
     fillinformation.h \
@@ -37,10 +39,10 @@ HEADERS += \
 FORMS += \
     Login.ui \
     Main_window.ui \
-    Manageplan.ui \
     RegisteredUser.ui \
     FillInformation.ui \
     Manageplan.ui \
+    Modifyplan.ui \
     Querylog.ui
 
 
