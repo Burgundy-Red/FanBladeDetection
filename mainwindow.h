@@ -41,6 +41,7 @@ public slots:
     void OnBtnClickedFillinformation();
     void OnBtnClickedManageplan();
     void OnBtnClickedQuerylog();
+    void OnBtnClickedFanStitching();
     void OnBtnClickedGenReport();
     void OnBtnClickedActionend();
     void OnBtnClickedInfo();

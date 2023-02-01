@@ -319,6 +319,7 @@
    <addaction name="action_fillinfo"/>
    <addaction name="action_manage"/>
    <addaction name="action_querylog"/>
+   <addaction name="action_fanstitching"/>
    <addaction name="action_genreport"/>
    <addaction name="action_curactionend"/>
    <addaction name="action_curinfo"/>
@@ -351,6 +352,17 @@
   <action name="action_curinfo">
    <property name="text">
     <string>当前信息</string>
+   </property>
+  </action>
+  <action name="action_fanstitching">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>叶片拼接</string>
    </property>
   </action>
  </widget>
