@@ -38,7 +38,7 @@ public slots:
 
 private:
     Ui::FillInformationWindow* ui;
-
+    void mysetupUi();
     QString surveyorName, farmId, farmName;
 };
 

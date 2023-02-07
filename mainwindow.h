@@ -31,29 +31,31 @@ public:
 signals:
     void toFillInformation(QString, QString);
     void toManageplanwindowInfo(QString, QString);
-    void toQuerylog(QMainWindow*, QString, QString);
+    void toQuerylog(QString, QString);
 
 public slots:
     void curLogin(QString, QString);
-    void fromQuerylogTestplanId(QString);
+    void fromQuerylogTestplanId(QString, QString);
     void fromManageplanwindow(QString, QString);
 
     void OnBtnClickedFillinformation();
     void OnBtnClickedManageplan();
     void OnBtnClickedQuerylog();
+    void OnBtnClickedFanStitching();
     void OnBtnClickedGenReport();
     void OnBtnClickedActionend();
     void OnBtnClickedInfo();
 
 private:
     Ui::MainWindow* ui;
+
+    QString testplanId, machineNum;
     QString curSurveyorName, curFarmId, curFarmName, curPlanName;
-    QString testplanId;
 
     FillInformation* fillinformation_window;
     Manageplan* manageplan_window;
     Querylog* querylog_window;
-    void showtable1();
+    void showturbine_table();
     void mysetupUi();
 };
 

@@ -3,7 +3,7 @@
 #include "ui_Modifyplan.h"
 
 Modifyplan::Modifyplan(QWidget *parent) : QMainWindow(parent),
-    ui(new Ui::ModifyplanWindow())
+    ui(new Ui::ModifyplanWindow)
 {
     ui->setupUi(this);
     connect(ui->table1, &QTableWidget::itemClicked, this, &Modifyplan::show_data1);

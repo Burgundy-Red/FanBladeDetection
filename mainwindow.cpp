@@ -19,20 +19,19 @@ Mainwindow::Mainwindow()
 
     connect(ui->action_fillinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedFillinformation);
     connect(ui->action_manage, &QAction::triggered, this, &Mainwindow::OnBtnClickedManageplan);
-//    connect(this, SIGNAL(toManageplanwindowInfo(QString, QString)), this->manageplan_window, SLOT(curLogin(QString, QString)));
-//    emit toManageplanwindowInfo(this->curFarmId, this->curSurveyorName);  // 在这里释放信号
-
     connect(ui->action_querylog, &QAction::triggered, this, &Mainwindow::OnBtnClickedQuerylog);
+    connect(ui->action_fanstitching, &QAction::triggered, this, &Mainwindow::OnBtnClickedFanStitching);
     connect(ui->action_genreport, &QAction::triggered, this, &Mainwindow::OnBtnClickedGenReport);
     connect(ui->action_curactionend, &QAction::triggered, this, &Mainwindow::OnBtnClickedActionend);
     connect(ui->action_curinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedInfo);
+
 //    connect(gather_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedGather);
 //    connect(stop_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedStop);
-//    connect(table1, &QTableWidget::itemClicked, this, &Mainwindow::show_data1);
+//    connect(turbine_table, &QTableWidget::itemClicked, this, &Mainwindow::show_data1);
 
     // 子窗口和父窗口连接
-    connect(querylog_window, SIGNAL(toMainwindowTestplanId(QString)), this, SLOT(fromQuerylogTestplanId(QString)));
-
+    // 查询检测记录
+    connect(querylog_window, SIGNAL(toMainwindowTestplanId(QString, QString)), this, SLOT(fromQuerylogTestplanId(QString, QString)));
 }
 
 Mainwindow::~Mainwindow() {
@@ -45,7 +44,7 @@ Mainwindow::~Mainwindow() {
 void Mainwindow::fromManageplanwindow(QString planName, QString planID){
     this->curPlanName = planName;
     this->testplanId = planID;
-    this->showtable1();
+    this->showturbine_table();
 }
 
 void Mainwindow::OnBtnClickedFillinformation()
@@ -67,8 +66,13 @@ void Mainwindow::OnBtnClickedManageplan()
 void Mainwindow::OnBtnClickedQuerylog()
 {
     this->querylog_window->setWindowModality(Qt::ApplicationModal);
-    emit toQuerylog(this, this->curSurveyorName, this->curFarmId);
+    emit toQuerylog(this->curSurveyorName, this->curFarmId);
     this->querylog_window->show();
+}
+
+void Mainwindow::OnBtnClickedFanStitching()
+{
+
 }
 
 void Mainwindow::OnBtnClickedGenReport()
@@ -110,16 +114,59 @@ void Mainwindow::curLogin(QString v1, QString v2)
 //    }
 }
 
-void Mainwindow::fromQuerylogTestplanId(QString v) {
-    this->testplanId = v;
+void Mainwindow::fromQuerylogTestplanId(QString testplanId, QString machineNum) {
+    this->testplanId = testplanId;
+    this->machineNum = machineNum;
+//    qDebug() << testplanId << machineNum;
+    ui->machineNum_le->setText(machineNum);
 
     // testplanid -> fanid -> fannum
+    QString sqlstr, surveyDate, testState;
+    QSqlQuery query;
+
+    // clear the list widget
+    ui->turbine_table->clearContents();
+
+    // get the survey date and test state from the database
+    sqlstr = "SELECT SurveyDate FROM test WHERE TestPlanID='" + testplanId + "' and FanID=(SELECT FanID FROM fan WHERE FanNum='" + machineNum + "')";
+    if (!query.exec(sqlstr)) {
+        qDebug() << "line 119: " << query.lastError();
+        return;
+    }
+    if (query.next()) {
+        surveyDate = query.value(0).toString();
+    }
+
+    sqlstr = "SELECT TestState FROM test WHERE TestPlanID='" + testplanId + "' and FanID=(SELECT FanID FROM fan WHERE FanNum='" + machineNum + "')";
+    if (!query.exec(sqlstr)) {
+        qDebug() << "Failed to execute the SQL statement: " << query.lastError();
+        return;
+    }
+    if (query.next()) {
+        testState = query.value(0).toString();
+    }
+
+    ui->turbine_table->insertRow(0);
+    ui->turbine_table->setItem(0, 0, new QTableWidgetItem(machineNum));
+    ui->turbine_table->setItem(0, 1, new QTableWidgetItem(testState));
+    ui->turbine_table->setItem(0, 2, new QTableWidgetItem(surveyDate));
+    int nCount = ui->turbine_table->rowCount();
+    // 居中显示
+    int nClumn = ui->turbine_table->columnCount();
+    for (int n = 0; n < nCount;n++)
+    {
+        for (int m = 0; m < nClumn ;m++)
+        {
+            if (ui->turbine_table->item(n,m))
+                ui->turbine_table->item(n,m)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        }
+    }
 }
 
-void Mainwindow::showtable1() {
+void Mainwindow::showturbine_table() {
     qDebug() << "启动计划";
-    ui->table1->setRowCount(0); // 把行数设为零
-    ui->table1->clearContents(); // 清空列表内容
+    ui->turbine_table->setRowCount(0); // 把行数设为零
+    ui->turbine_table->clearContents(); // 清空列表内容
 
     QSqlQuery query;
     QString Sqlstr = "SELECT COUNT(*) FROM (SELECT test.FanID FROM test, fan WHERE fan.FanID IN(SELECT FanID FROM fan WHERE FarmID = '" + curFarmId + "') and test.FanID IN(SELECT FanID FROM test WHERE TestState = '未检测' and TestPlanID= '" + testplanId + "') and fan.FanID = test.FanID and TestPlanID= '" + testplanId + "') AS defectiveNum";
@@ -144,8 +191,8 @@ void Mainwindow::showtable1() {
     }
 
     for (int i = 0; i < NumOfTesting; i++) {
-        int row = ui->table1->rowCount();
-        ui->table1->insertRow(row); // 在最后插入行
+        int row = ui->turbine_table->rowCount();
+        ui->turbine_table->insertRow(row); // 在最后插入行
         Sqlstr = "SELECT SurveyDate FROM test WHERE TestPlanID='" + testplanId + "' and FanID=(SELECT FanID FROM fan WHERE FanNum='" + TestingFanNum[i] + "')";
         query.exec(Sqlstr);
         query.next();
@@ -156,9 +203,9 @@ void Mainwindow::showtable1() {
         item2->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         QTableWidgetItem* item3 = new QTableWidgetItem(serSurveyDate);
         item3->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        ui->table1->setItem(row, 0, item1); // 显示
-        ui->table1->setItem(row, 1, item2);
-        ui->table1->setItem(row, 2, item3);
+        ui->turbine_table->setItem(row, 0, item1); // 显示
+        ui->turbine_table->setItem(row, 1, item2);
+        ui->turbine_table->setItem(row, 2, item3);
     }
 
     Sqlstr = "SELECT test.FanID FROM test, fan WHERE test.FanID IN(SELECT FanID FROM test WHERE TestState = '未检测'and TestPlanID= '" + testplanId + "') and fan.FanID = test.FanID and TestPlanID= '" + testplanId + "'";
@@ -168,8 +215,8 @@ void Mainwindow::showtable1() {
         serFanID.append(query.value(0).toString());
     }
     for (int i = 0; i < unTestNum; i++) {
-        int row = ui->table1->rowCount();
-        ui->table1->insertRow(row); // 在最后插入行
+        int row = ui->turbine_table->rowCount();
+        ui->turbine_table->insertRow(row); // 在最后插入行
         Sqlstr = "SELECT FanNum FROM fan WHERE FanID= '" + serFanID[i] + "'AND FarmID = '" + curFarmId + "'";
         query.exec(Sqlstr);
         query.next();
@@ -178,8 +225,8 @@ void Mainwindow::showtable1() {
         item1->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter); // 居中
         QTableWidgetItem* item2 = new QTableWidgetItem("未检测");
         item2->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        ui->table1->setItem(row, 0, item1); // 显示
-        ui->table1->setItem(row, 1, item2);
+        ui->turbine_table->setItem(row, 0, item1); // 显示
+        ui->turbine_table->setItem(row, 1, item2);
     }
 
     Sqlstr = "SELECT fan.FanNum FROM fan WHERE fan.FanID IN(SELECT FanID FROM test WHERE TestPlanID= '" + testplanId + "' AND FarmID = '" + curFarmId + "'AND TestState= '已检测')";
@@ -189,8 +236,8 @@ void Mainwindow::showtable1() {
         TestedFanNum.append(query.value(0).toString());
     }
     for (int i = 0; i < NumOfTested; i++) {
-        int row = ui->table1->rowCount();
-        ui->table1->insertRow(row); // 在最后插入行
+        int row = ui->turbine_table->rowCount();
+        ui->turbine_table->insertRow(row); // 在最后插入行
         Sqlstr = "SELECT SurveyDate FROM test WHERE TestPlanID='" + testplanId + "' and FanID=(SELECT FanID FROM fan WHERE FanNum='" + TestedFanNum[i] + "'AND FarmID = '" + curFarmId + "')";
         query.exec(Sqlstr);
         query.next();
@@ -201,23 +248,31 @@ void Mainwindow::showtable1() {
         item2->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         QTableWidgetItem* item3 = new QTableWidgetItem(serSurveyDate);
         item3->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        ui->table1->setItem(row, 0, item1); // 显示
-        ui->table1->setItem(row, 1, item2);
-        ui->table1->setItem(row, 2, item3);
+        ui->turbine_table->setItem(row, 0, item1); // 显示
+        ui->turbine_table->setItem(row, 1, item2);
+        ui->turbine_table->setItem(row, 2, item3);
     }
 }
 
 void Mainwindow::mysetupUi(){
+    // turbine_table 不显示行号
+    QHeaderView* headerView = ui->turbine_table->verticalHeader();
+    headerView->setHidden(true); //false 显示行号列  true Hide
+    // defect_table 不显示行号
+    QHeaderView* headerView1 = ui->defect_table->verticalHeader();
+    headerView1->setHidden(true); //false 显示行号列  true Hide
 
-    ui->table1->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // 自动调整列宽
-    ui->table1->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive); // 可以手动调整列宽
-    ui->table2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // 自动调整列宽
-    ui->table2->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive); // 可以手动调整列宽
+    ui->turbine_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // 自动调整列宽
+    ui->turbine_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive); // 可以手动调整列宽
+    ui->defect_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // 自动调整列宽
+    ui->defect_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive); // 可以手动调整列宽
 
-    ui->table1->setSelectionMode(QAbstractItemView::SingleSelection); // 设置只可以单选，可以使用ExtendedSelection进行多选
-    ui->table1->setSelectionBehavior(QAbstractItemView::SelectRows); // 设置 不可选择单个单元格，只可选择一行。
-    ui->table1->setEditTriggers(QAbstractItemView::NoEditTriggers); // 设置表格不可更改
-    ui->table2->setSelectionMode(QAbstractItemView::SingleSelection); // 设置只可以单选，可以使用ExtendedSelection进行多选
-    ui->table2->setSelectionBehavior(QAbstractItemView::SelectRows); // 设置 不可选择单个单元格，只可选择一行。
-    ui->table2->setEditTriggers(QAbstractItemView::NoEditTriggers); // 设置表格不可更改
+    ui->turbine_table->setSelectionMode(QAbstractItemView::SingleSelection); // 设置只可以单选，可以使用ExtendedSelection进行多选
+    ui->turbine_table->setSelectionBehavior(QAbstractItemView::SelectRows); // 设置 不可选择单个单元格，只可选择一行。
+    ui->turbine_table->setEditTriggers(QAbstractItemView::NoEditTriggers); // 设置表格不可更改
+    ui->defect_table->setSelectionMode(QAbstractItemView::SingleSelection); // 设置只可以单选，可以使用ExtendedSelection进行多选
+    ui->defect_table->setSelectionBehavior(QAbstractItemView::SelectRows); // 设置 不可选择单个单元格，只可选择一行。
+    ui->defect_table->setEditTriggers(QAbstractItemView::NoEditTriggers); // 设置表格不可更改
+
+    ui->machineNum_le->setFixedWidth(255);
 }

@@ -166,8 +166,10 @@ void Querylog::OnBtnClickedOk() {
         while (query.next()) {
             this->selectedTestplanId = query.value(0).toString();
         }
+
+        this->selectedMachineNum = ui->machineName_combo->currentText();
     }
-    emit toMainwindowTestplanId(this->selectedTestplanId);
+    emit toMainwindowTestplanId(this->selectedTestplanId, this->selectedMachineNum);
     this->close();
 }
 
@@ -175,8 +177,7 @@ void Querylog::OnBtnClickedCancel() {
     this->close();
 }
 
-void Querylog::fromMainwindow(QMainWindow* p, QString v1, QString v2) {
-    this->mainwindow = p;
+void Querylog::fromMainwindow(QString v1, QString v2) {
     this->surveyorName = v1;
     this->farmId = v2;
     qDebug() << v1 << v2;

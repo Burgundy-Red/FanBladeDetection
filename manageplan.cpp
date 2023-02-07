@@ -49,7 +49,6 @@ void Manageplan::fromMainwindow(QString v1, QString v2) {
     if (query.next()) {
         this->surveyorId = query.value(0).toString();
     }
-    qDebug()<<farmId<<farmName<<this->surveyorId<<strSql;
 }
 
 void Manageplan::fromModifyplanwindow(){
@@ -111,6 +110,17 @@ void Manageplan::UpdatePlanList()
             ui->PlanList->setItem(i, 1, newItem);
             newItem = new QTableWidgetItem(plandate[i]);
             ui->PlanList->setItem(i, 2, newItem);
+        }
+
+        // 居中显示
+        int nCount = ui->PlanList->rowCount();
+        int nClumn = ui->PlanList->columnCount();
+        for (int n = 0; n < nCount;n++) {
+            for (int m = 0; m < nClumn;m++) {
+                // 判断 null
+                if (ui->PlanList->item(n,m))
+                    ui->PlanList->item(n,m)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            }
         }
     }
 }
@@ -186,7 +196,6 @@ void Manageplan::OnBtnClickedNewplan()
                 Sqlstr = "INSERT INTO test (FanID,SurveyorID,TestPlanID,TestState) VALUES ('" + machineID + "','" + surveyorId + "','" + maxTestPlanID + "','未检测')";
                 if (!query.exec(Sqlstr))
                 {
-                    qDebug()<<machineID<<surveyorId<<maxTestPlanID;
                     QMessageBox::warning(NULL, "提示！", "添加机组失败");
                     return;
                 }
@@ -351,6 +360,10 @@ void Manageplan::OnBtnClickedDelateplan() {
 
 void Manageplan::mysetupUi()
 {
+    //显示行号列
+    QHeaderView* headerView = ui->PlanList->verticalHeader();
+    headerView->setHidden(true); //false 显示行号列  true Hide
+
     // Set some properties of the table
     ui->PlanList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);  // Auto-adjust column width
     ui->PlanList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);  // Manually adjust column width
