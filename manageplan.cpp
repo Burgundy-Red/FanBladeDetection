@@ -313,7 +313,7 @@ void Manageplan::OnBtnClickedDelateplan() {
     }
 
     if (TestIDNum != 0) {
-        QString testID[TestIDNum];
+        QString *testID = new QString[TestIDNum];
         QSqlQuery query;
         query.exec("SELECT TestID FROM test WHERE TestPlanID='" + TestPlanID + "'");
         int i = 0;
@@ -342,6 +342,7 @@ void Manageplan::OnBtnClickedDelateplan() {
 
             i++;
         }
+		delete[] testID;
     }
     Sqlstr = "DELETE FROM testplan WHERE TestPlanID= '" + TestPlanID + "'";
     if (!query.exec(Sqlstr))

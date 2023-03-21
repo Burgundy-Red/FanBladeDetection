@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.33423.255
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FanBladeDetection", "FanBladeDetection.vcxproj", "{BE3A496C-D5F4-39B7-B4B5-DEC9532F801D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE3A496C-D5F4-39B7-B4B5-DEC9532F801D}.Debug|x64.ActiveCfg = Debug|x64
+		{BE3A496C-D5F4-39B7-B4B5-DEC9532F801D}.Debug|x64.Build.0 = Debug|x64
+		{BE3A496C-D5F4-39B7-B4B5-DEC9532F801D}.Release|x64.ActiveCfg = Release|x64
+		{BE3A496C-D5F4-39B7-B4B5-DEC9532F801D}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E8A1E53A-9817-4F7A-986E-34FE0EB49DF4}
+	EndGlobalSection
+EndGlobal

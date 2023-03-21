@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>QuerylogWindow</class>
- <widget class="QWidget" name="Form">
+ <widget class="QWidget" name="QuerylogWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -58,7 +58,20 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="planName_combo"/>
+       <widget class="QComboBox" name="planName_combo">
+        <property name="minimumSize">
+         <size>
+          <width>190</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>190</width>
+          <height>28</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer_2">
@@ -98,7 +111,20 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="machineName_combo"/>
+       <widget class="QComboBox" name="machineName_combo">
+        <property name="minimumSize">
+         <size>
+          <width>190</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>190</width>
+          <height>28</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer_4">

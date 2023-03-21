@@ -138,6 +138,7 @@ void FillInformation::onSearchTurbineButtonClicked()
         QMessageBox::warning(this, "提示", "无此机组相关信息");
         return;
     }
+    ui->turbine_table->setRowCount(0);
     ui->turbine_table->clearContents();										//清空列表
     ui->turbine_table->insertRow(0);
     int count = 0;
@@ -535,5 +536,6 @@ void FillInformation::mysetupUi()
     ui->turbine_table->setSelectionMode(QAbstractItemView::SingleSelection);  // Only single selection allowed
     ui->turbine_table->setSelectionBehavior(QAbstractItemView::SelectRows);  // Only entire rows can be selected
     ui->turbine_table->setEditTriggers(QAbstractItemView::NoEditTriggers);   // Table is not editable
+    ui->turbineType_combo->setEditable(true);
 }
 

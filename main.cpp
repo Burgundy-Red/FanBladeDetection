@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
     db.setHostName("127.0.0.1");
     db.setUserName("root");
-    db.setPassword("xiaowang");
+    db.setPassword("123456");
     db.setDatabaseName("fan");
     if(db.open())
     {

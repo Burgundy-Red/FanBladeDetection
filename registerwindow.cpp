@@ -52,14 +52,14 @@ void Registerwindow::OnBtnClickedOk() {
             farmid = id;
         } else {
             if (!query.isActive()) { qDebug() << "line 54: " << query.lastError(); return; }
-            if (query.next()) { farmid = query.value(0).toInt(); qDebug() << farmid; }
+            if (query.next()) { farmid = query.value(0).toInt();}
         }
-        query.prepare("INSERT INTO surveyors (SurveyorName, PassWord, FarmID, Position) VALUES (:SurveyorName, :PassWord, :FarmID, :Position);");
+        query.prepare("INSERT INTO surveyors (SurveyorName, PassWord, FarmID, Position) VALUES (:SurveyorName, :PassWord, :FarmID, :Position)");
         query.bindValue(":SurveyorName", username_input);
         query.bindValue(":PassWord", password_input);
         query.bindValue(":FarmID", farmid);
-        query.bindValue(":Position", 101010);
-        if (!query.exec(sqlStr)) {
+        query.bindValue(":Position", position_select);
+        if (!query.exec()) {
             qDebug() << "line 60: " << query.lastError();
             QMessageBox::information(this, "错误", "注册失败", QMessageBox::Yes);
             return;

@@ -1,0 +1,4 @@
+.qmake.stash
+debug/
+release
+ui_*.h

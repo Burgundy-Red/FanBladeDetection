@@ -57,6 +57,7 @@ private:
     Querylog* querylog_window;
     void showturbine_table();
     void mysetupUi();
+	void show_data(QModelIndex Item);
 };
 
 #endif // MAINWINDOW_H

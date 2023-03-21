@@ -25,6 +25,8 @@ Mainwindow::Mainwindow()
     connect(ui->action_curactionend, &QAction::triggered, this, &Mainwindow::OnBtnClickedActionend);
     connect(ui->action_curinfo, &QAction::triggered, this, &Mainwindow::OnBtnClickedInfo);
 
+	connect(ui->turbine_table, &QTableView::clicked, this, &Mainwindow::show_data);
+
 //    connect(gather_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedGather);
 //    connect(stop_btn, &QPushButton::clicked, this, &Mainwindow::OnBtnClickedStop);
 //    connect(turbine_table, &QTableWidget::itemClicked, this, &Mainwindow::show_data1);
@@ -252,6 +254,16 @@ void Mainwindow::showturbine_table() {
         ui->turbine_table->setItem(row, 1, item2);
         ui->turbine_table->setItem(row, 2, item3);
     }
+}
+
+void Mainwindow::show_data(QModelIndex Item)
+{
+	// Show the plan name in the plan name box when a row in the list is clicked
+	int row = Item.row();  // Get the row number
+	QString fanNum = ui->turbine_table->item(row, 0)->text();
+	// Set the font and font size of the text
+	ui->machineNum_le->setFont(QFont("SimSun", 13));
+	ui->machineNum_le->setText(fanNum);
 }
 
 void Mainwindow::mysetupUi(){
