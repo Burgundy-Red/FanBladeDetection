@@ -1,5 +1,0 @@
-.qmake.stash
-debug/
-release
-ui_*.h
-.vs/**
