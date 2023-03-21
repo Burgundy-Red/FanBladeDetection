@@ -1,5 +1,6 @@
+.gitignore
 .qmake.stash
 debug/
-release
+release/
 ui_*.h
-.vs/**
+.vs/
